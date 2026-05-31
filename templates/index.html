@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DotVoice — Braille Reader</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <h1>DotVoice</h1>
+    <p class="subtitle">Real-time Braille to Speech</p>
+  </header>
+
+  <main>
+    <section class="video-panel" aria-label="Camera feed">
+      <img id="video" src="/video_feed" alt="Live camera feed showing detected Braille dots" />
+    </section>
+
+    <section class="info-panel">
+      <div class="transcript-box" aria-live="polite" aria-atomic="true" role="status">
+        <label>Detected Text</label>
+        <p id="transcript">Waiting for Braille...</p>
+      </div>
+
+      <div class="guidance-box" aria-live="polite" role="status">
+        <label>Camera Guidance</label>
+        <p id="guidance">Starting...</p>
+      </div>
+
+      <div class="stats-box" aria-label="Detection stats">
+        <span id="dots-count">Dots: 0</span>
+        <span id="blur-score">Blur: 0.0</span>
+      </div>
+
+      <div class="controls">
+        <button id="btn-read" onclick="readAloud()" aria-label="Read detected text aloud">
+          Read Aloud <kbd>Space</kbd>
+        </button>
+        <button id="btn-repeat" onclick="repeatLast()" aria-label="Repeat last spoken text">
+          Repeat <kbd>R</kbd>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
