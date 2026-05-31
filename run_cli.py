@@ -1,6 +1,8 @@
 import cv2
 from dotvoice.capture import Camera
 from dotvoice.pipeline import read_braille
+from dotvoice.tts import Speaker
+from dotvoice.guidance import GuidanceEngine
 
 PROCESS_EVERY_N = 5
 MIN_DOTS_FOR_READ = 3
@@ -15,10 +17,16 @@ def draw_dots_on_frame(frame, dots):
 
 
 def main():
+    speaker = Speaker()
+    guidance = GuidanceEngine()
+
     frame_count = 0
     last_text = ''
     last_dots = []
     last_blur = 0.0
+    status_line = 'Starting...'
+
+    speaker.speak("DotVoice ready. Move camera over Braille.")
 
     with Camera() as cam:
         print("DotVoice running — press Q to quit")
@@ -34,18 +42,29 @@ def main():
                 result = read_braille(frame)
                 last_dots = result['dots']
                 last_blur = result['quality'].get('blur', 0)
-                if len(last_dots) >= MIN_DOTS_FOR_READ:
-                    last_text = result['text']
+                text = result['text'] if len(last_dots) >= MIN_DOTS_FOR_READ else ''
+                last_text = text
+
+                action, payload = guidance.evaluate(result['quality'], last_dots, text)
+
+                if action == 'guide':
+                    status_line = payload
+                    speaker.speak(payload)
+                elif action == 'read':
+                    status_line = f"Reading: {payload}"
+                    speaker.speak(f"Braille detected. {payload}")
                 else:
-                    last_text = ''
+                    status_line = f"Stabilizing... ({text})"
 
             display = draw_dots_on_frame(frame, last_dots)
 
-            cv2.rectangle(display, (0, fh - 80), (fw, fh), (0, 0, 0), -1)
-            cv2.putText(display, f"Text: {last_text if last_text else '(no braille detected)'}",
-                        (10, fh - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+            cv2.rectangle(display, (0, fh - 90), (fw, fh), (0, 0, 0), -1)
+            cv2.putText(display, f"Text: {last_text if last_text else '---'}",
+                        (10, fh - 60), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+            cv2.putText(display, status_line,
+                        (10, fh - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 200, 255), 2)
             cv2.putText(display, f"Blur: {last_blur:.1f}  Dots: {len(last_dots)}",
-                        (10, fh - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
+                        (fw - 220, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (180, 180, 180), 1)
 
             cv2.imshow('DotVoice', display)
             if cv2.waitKey(1) & 0xFF == ord('q'):
