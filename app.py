@@ -14,6 +14,7 @@ _state = {
     'guidance': 'Starting...',
     'dots': 0,
     'blur': 0.0,
+    'fps': 0.0,
     'lock': threading.Lock(),
 }
 
@@ -22,8 +23,11 @@ MIN_DOTS = 3
 
 
 def _camera_loop():
+    import time
     guidance_engine = GuidanceEngine()
     frame_count = 0
+    fps_counter = 0
+    fps_start = time.time()
 
     with Camera() as cam:
         while True:
@@ -33,6 +37,13 @@ def _camera_loop():
                 continue
 
             frame_count += 1
+            fps_counter += 1
+            elapsed = time.time() - fps_start
+            if elapsed >= 1.0:
+                with _state['lock']:
+                    _state['fps'] = fps_counter / elapsed
+                fps_counter = 0
+                fps_start = time.time()
 
             if frame_count % PROCESS_EVERY_N == 0:
                 result = read_braille(frame)
@@ -102,10 +113,11 @@ def events():
                 guidance = _state['guidance']
                 dots = _state['dots']
                 blur = _state['blur']
+                fps = _state['fps']
             if text != last_text or guidance != last_guidance:
                 last_text = text
                 last_guidance = guidance
-                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}\n\n"
+                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}\n\n"
                 yield data
             time.sleep(0.2)
     return Response(stream_with_context(generate()), mimetype='text/event-stream')

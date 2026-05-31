@@ -1,3 +1,4 @@
+import time
 import cv2
 from dotvoice.capture import Camera
 from dotvoice.pipeline import read_braille
@@ -26,6 +27,10 @@ def main():
     last_blur = 0.0
     status_line = 'Starting...'
 
+    fps_counter = 0
+    fps_start = time.time()
+    fps = 0.0
+
     speaker.speak("DotVoice ready. Move camera over Braille.")
 
     with Camera() as cam:
@@ -36,7 +41,14 @@ def main():
                 break
 
             frame_count += 1
+            fps_counter += 1
             fh, fw = frame.shape[:2]
+
+            elapsed = time.time() - fps_start
+            if elapsed >= 1.0:
+                fps = fps_counter / elapsed
+                fps_counter = 0
+                fps_start = time.time()
 
             if frame_count % PROCESS_EVERY_N == 0:
                 result = read_braille(frame)
@@ -63,8 +75,8 @@ def main():
                         (10, fh - 60), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
             cv2.putText(display, status_line,
                         (10, fh - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 200, 255), 2)
-            cv2.putText(display, f"Blur: {last_blur:.1f}  Dots: {len(last_dots)}",
-                        (fw - 220, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (180, 180, 180), 1)
+            cv2.putText(display, f"FPS: {fps:.1f}  Blur: {last_blur:.1f}  Dots: {len(last_dots)}",
+                        (fw - 280, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (180, 180, 180), 1)
 
             cv2.imshow('DotVoice', display)
             if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -6,7 +6,7 @@ const blurEl = document.getElementById('blur-score');
 
 const sse = new EventSource('/events');
 sse.onmessage = (e) => {
-  const [text, guide, dots, blur] = e.data.split('||');
+  const [text, guide, dots, blur, fps] = e.data.split('||');
   if (text && text !== lastText) {
     transcript.textContent = text;
     lastText = text;
@@ -14,7 +14,7 @@ sse.onmessage = (e) => {
   }
   guidance.textContent = guide || '';
   dotsEl.textContent = `Dots: ${dots}`;
-  blurEl.textContent = `Blur: ${blur}`;
+  blurEl.textContent = `Blur: ${blur}  FPS: ${fps || '—'}`;
 };
 
 function speakText(text) {
