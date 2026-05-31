@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.pytest_cache/
+data/datasets/
+data/real/
+*.egg-info/
+.DS_Store
