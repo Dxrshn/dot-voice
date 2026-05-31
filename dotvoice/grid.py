@@ -113,3 +113,15 @@ def segment_grid(dots):
             result.append(tuple(sorted(dot_positions)))
 
     return result
+
+
+def cell_confidence(dot_positions, u):
+    if not dot_positions:
+        return 0.0
+    scores = []
+    for x, y in dot_positions:
+        snap_x = round(x / (u * 0.5)) * (u * 0.5)
+        snap_y = round(y / u) * u
+        dist = ((x - snap_x)**2 + (y - snap_y)**2) ** 0.5
+        scores.append(max(0.0, 1.0 - dist / (0.5 * u)))
+    return float(np.mean(scores))
