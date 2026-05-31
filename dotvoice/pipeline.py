@@ -1,9 +1,9 @@
 from collections import Counter
 from dotvoice.preprocess import preprocess, to_gray
 from dotvoice.detect import detect_dots, draw_debug
-from dotvoice.grid import segment_grid
+from dotvoice.grid import segment_grid, estimate_rotation, rotate_dots
 from dotvoice.decode import decode_cells
-from dotvoice.quality import blur_score, coverage, quality_report
+from dotvoice.quality import blur_score, quality_report
 
 _vote_buffer = []
 VOTE_WINDOW = 5
@@ -21,7 +21,12 @@ def read_braille(image):
     quality = quality_report(processed)
     quality['blur_raw'] = blur_score(gray)
     dots = detect_dots(processed)
-    cells = segment_grid(dots)
+
+    angle = estimate_rotation(dots)
+    quality['skew_angle'] = angle
+    dots_aligned = rotate_dots(dots, angle)
+
+    cells = segment_grid(dots_aligned)
     text = decode_cells(cells)
 
     if text and text.strip():

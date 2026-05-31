@@ -2,6 +2,42 @@ import numpy as np
 from scipy.spatial.distance import cdist
 
 
+def estimate_rotation(dots):
+    if len(dots) < 4:
+        return 0.0
+    pts = np.array([(x, y) for x, y, _ in dots])
+    dists = cdist(pts, pts)
+    np.fill_diagonal(dists, np.inf)
+    angles = []
+    for i in range(len(pts)):
+        j = np.argmin(dists[i])
+        dx = pts[j][0] - pts[i][0]
+        dy = pts[j][1] - pts[i][1]
+        angle = np.degrees(np.arctan2(dy, dx))
+        angle = angle % 90
+        if angle > 45:
+            angle -= 90
+        angles.append(angle)
+    angles = np.array(angles)
+    angles = angles[np.abs(angles) < 30]
+    if len(angles) == 0:
+        return 0.0
+    return float(np.median(angles))
+
+
+def rotate_dots(dots, angle_deg):
+    if abs(angle_deg) < 0.5:
+        return dots
+    theta = np.radians(-angle_deg)
+    cos_t, sin_t = np.cos(theta), np.sin(theta)
+    xs = np.array([x for x, _, _ in dots])
+    ys = np.array([y for _, y, _ in dots])
+    cx, cy = xs.mean(), ys.mean()
+    xs_r = cos_t * (xs - cx) - sin_t * (ys - cy) + cx
+    ys_r = sin_t * (xs - cx) + cos_t * (ys - cy) + cy
+    return [(float(xs_r[i]), float(ys_r[i]), dots[i][2]) for i in range(len(dots))]
+
+
 def _estimate_unit(dots):
     if len(dots) < 2:
         return 20.0
