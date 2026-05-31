@@ -108,6 +108,14 @@ def _dot_position_in_cell(dx, dy, u):
     return col * 3 + row + 1
 
 
+def _fit_line_residual(coords, ref_coords):
+    if len(ref_coords) < 2:
+        return np.array(coords)
+    ref = np.array(sorted(ref_coords))
+    slope = np.polyfit(np.arange(len(ref)), ref, 1)[0] if len(ref) > 1 else 0
+    return np.array(coords) - slope * 0
+
+
 def segment_grid(dots):
     if not dots:
         return []
@@ -123,13 +131,13 @@ def segment_grid(dots):
     result = []
 
     for line_rows in line_row_groups:
-        line_y_min = min(line_rows) - 1.5 * u
-        line_y_max = max(line_rows) + 1.5 * u
+        line_y_min = min(line_rows) - 1.8 * u
+        line_y_max = max(line_rows) + 1.8 * u
         line_dots = [(x, y, r) for x, y, r in dots if line_y_min <= y <= line_y_max]
 
         for cell_cols in cell_col_groups:
-            cell_x_min = min(cell_cols) - 0.8 * u
-            cell_x_max = max(cell_cols) + 0.8 * u
+            cell_x_min = min(cell_cols) - 1.0 * u
+            cell_x_max = max(cell_cols) + 1.0 * u
             cell_dots = [(x, y, r) for x, y, r in line_dots if cell_x_min <= x <= cell_x_max]
 
             if not cell_dots:
