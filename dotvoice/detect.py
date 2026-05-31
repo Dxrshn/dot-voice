@@ -23,10 +23,18 @@ def detect_dots(gray):
     keypoints = detector.detect(gray)
 
     if not keypoints:
-        return _fallback_detect(gray)
+        dots = _fallback_detect(gray)
+    else:
+        dots = [(kp.pt[0], kp.pt[1], kp.size / 2) for kp in keypoints]
+        dots = _filter_by_size_consistency(dots)
 
-    dots = [(kp.pt[0], kp.pt[1], kp.size / 2) for kp in keypoints]
-    dots = _filter_by_size_consistency(dots)
+    max_plausible = int(gray.shape[0] * gray.shape[1] / 400)
+    if len(dots) > max_plausible:
+        return []
+
+    if len(dots) > 30:
+        dots = _filter_by_spacing(dots)
+
     return dots
 
 
@@ -50,15 +58,30 @@ def _fallback_detect(gray):
         r = (w + h) / 4
         dots.append((cx, cy, r))
 
-    return _filter_by_size_consistency(dots)
+    dots = _filter_by_size_consistency(dots)
+    return dots
 
 
-def _filter_by_size_consistency(dots, tolerance=0.6):
+def _filter_by_size_consistency(dots, tolerance=0.5):
     if len(dots) < 3:
         return dots
     radii = [r for _, _, r in dots]
     median_r = np.median(radii)
     return [(x, y, r) for x, y, r in dots if abs(r - median_r) < tolerance * median_r]
+
+
+def _filter_by_spacing(dots, tolerance=3.0):
+    if len(dots) < 3:
+        return dots
+    pts = np.array([(x, y) for x, y, _ in dots])
+    from scipy.spatial.distance import cdist
+    dists = cdist(pts, pts)
+    np.fill_diagonal(dists, np.inf)
+    nn_dists = dists.min(axis=1)
+    median_nn = np.median(nn_dists)
+    if median_nn == 0:
+        return dots
+    return [dots[i] for i in range(len(dots)) if nn_dists[i] < tolerance * median_nn]
 
 
 def draw_debug(image, dots):

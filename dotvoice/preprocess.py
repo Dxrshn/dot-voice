@@ -84,5 +84,6 @@ def preprocess(image):
     gray = perspective_correct(gray)
     gray = normalize_lighting(gray)
     gray = denoise(gray)
+    gray = cv2.fastNlMeansDenoising(gray, h=10, templateWindowSize=7, searchWindowSize=21)
     gray = enhance(gray)
     return gray

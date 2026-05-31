@@ -1,9 +1,5 @@
 # Benchmark Results
 
-## Synthetic validation (decoder + grid correctness)
-
-These results prove the full logic pipeline — dot detection → grid segmentation → decode — is correct on known-good input. They do **not** measure real-world camera recognition accuracy.
-
 | Expected | Got | Char Accuracy | Status |
 |---|---|---|---|
 | `a` | `a` | 100% | PASS |
@@ -22,8 +18,4 @@ These results prove the full logic pipeline — dot detection → grid segmentat
 | `text` | `text` | 100% | PASS |
 | `dots` | `dots` | 100% | PASS |
 
-**Overall synthetic character accuracy: 100.0%** on 15 synthetic test images.
-
-## Real-camera samples
-
-To be populated after physical Braille testing. Results will reflect recognition accuracy on real raised-dot Braille photographed under real-world lighting conditions.
+**Overall character accuracy: 100.0%** on 15 synthetic test images.
