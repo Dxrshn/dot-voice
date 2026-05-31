@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cv2
-from dotvoice.pipeline import read_braille
+from dotvoice.pipeline import read_braille, reset
 
 DATASET_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'datasets')
 OUT_FILE = os.path.join(os.path.dirname(__file__), '..', 'docs', 'accuracy.md')
@@ -32,6 +32,7 @@ for word in TEST_WORDS:
         print(f'missing: {path}')
         continue
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    reset()
     result = read_braille(img)
     got = result['text'].strip()
     acc = char_accuracy(word, got)

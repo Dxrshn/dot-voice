@@ -9,6 +9,11 @@ _vote_buffer = []
 VOTE_WINDOW = 5
 
 
+def reset():
+    global _vote_buffer
+    _vote_buffer = []
+
+
 def read_braille(image):
     global _vote_buffer
     gray = to_gray(image)
