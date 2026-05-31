@@ -58,9 +58,17 @@ python run_cli.py
 
 ## Accuracy
 
+### Synthetic validation (decoder + grid correctness)
+
+These tests prove the logic pipeline is correct — they do not measure real-world camera recognition.
+
 | Test set | Words | Character accuracy |
 |---|---|---|
 | Synthetic (generated) | 15 | 100% |
+
+### Real-camera samples
+
+Real-camera results will be added after physical Braille testing. The synthetic tests above validate the full decode → grid → decode logic chain end-to-end.
 
 Full results: [`docs/accuracy.md`](docs/accuracy.md)
 
