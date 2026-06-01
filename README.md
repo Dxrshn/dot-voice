@@ -14,7 +14,8 @@ Blind and low-vision users rely on Braille, but pointing a camera at a Braille p
 - Accessible web UI: high-contrast, large text, ARIA live regions, keyboard shortcuts
 - Multi-frame voting for stable readings
 - Perspective correction and adaptive lighting normalization
-- 100% character accuracy on synthetic test set (15 words)
+- 100% character accuracy on clean synthetic test set (15 words)
+- **90.8% pass rate** across 120 stress-test scenarios (noise, rotation ±5°, blur, uneven lighting)
 - ~25–30 FPS camera capture with Braille processing every 5th frame (real-time feedback)
 
 ## How It Detects Physical Braille
