@@ -143,3 +143,19 @@
 | `dots` | `rot=+10deg` | `` | FAIL |
 | `dots` | `lighting_gradient` | `dots` | PASS |
 | `dots` | `blur_7x7` | `dots` | PASS |
+
+## Noise Gate: Recall + Rejection
+
+| Metric | Result | Threshold |
+|---|---|---|
+| Real word recall | 100% (10/10) | ≥90% |
+| Junk rejection | 0% (0/10) | ≥90% |
+| Gate | FAIL | Both must pass |
+
+## Noise Gate: Recall + Rejection
+
+| Metric | Result | Threshold |
+|---|---|---|
+| Real word recall | 100% (10/10) | ≥90% |
+| Junk rejection | 0% (0/10) | ≥90% |
+| Gate | FAIL | Both must pass |

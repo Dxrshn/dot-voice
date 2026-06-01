@@ -9,6 +9,13 @@ _vote_buffer = []
 VOTE_WINDOW = 5
 
 
+def _text_plausible(text):
+    if not text or not text.strip():
+        return False
+    junk_chars = sum(1 for c in text if c in '?')
+    return junk_chars / len(text) < 0.4
+
+
 def reset():
     global _vote_buffer
     _vote_buffer = []
@@ -34,7 +41,7 @@ def read_braille(image):
     confidence = cell_confidence(dot_positions, u) if dot_positions else 0.0
     quality['confidence'] = confidence
 
-    if text and text.strip() and confidence > 0.3:
+    if text and text.strip() and confidence > 0.3 and _text_plausible(text):
         _vote_buffer.append(text)
         if len(_vote_buffer) > VOTE_WINDOW:
             _vote_buffer.pop(0)
