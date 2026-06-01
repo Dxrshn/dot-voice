@@ -16,6 +16,7 @@ _state = {
     'blur': 0.0,
     'fps': 0.0,
     'confidence': 0.0,
+    'speak': False,
     'lock': threading.Lock(),
 }
 
@@ -67,12 +68,15 @@ def _camera_loop():
                 if action == 'read':
                     guidance_msg = f"Reading: {payload}"
                     display_text = payload
+                    speak_now = True
                 elif action == 'guide':
                     guidance_msg = payload
-                    display_text = text
+                    display_text = ''
+                    speak_now = False
                 else:
-                    guidance_msg = f"Stabilizing..."
-                    display_text = text
+                    guidance_msg = "Stabilizing..."
+                    display_text = ''
+                    speak_now = False
 
                 with _state['lock']:
                     _state['text'] = display_text
@@ -80,6 +84,7 @@ def _camera_loop():
                     _state['dots'] = len(dots)
                     _state['blur'] = blur
                     _state['confidence'] = confidence
+                    _state['speak'] = speak_now
 
             _, jpeg = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
             with _state['lock']:
@@ -118,10 +123,13 @@ def events():
                 blur = _state['blur']
                 fps = _state['fps']
                 confidence = _state['confidence']
+                speak = _state['speak']
+                if speak:
+                    _state['speak'] = False
             if text != last_text or guidance != last_guidance:
                 last_text = text
                 last_guidance = guidance
-                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}||{confidence:.2f}\n\n"
+                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}||{confidence:.2f}||{'1' if speak else '0'}\n\n"
                 yield data
             time.sleep(0.2)
     return Response(stream_with_context(generate()), mimetype='text/event-stream')
@@ -133,4 +141,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=False, threaded=True, port=5000)
+    app.run(debug=False, threaded=True, port=5001)

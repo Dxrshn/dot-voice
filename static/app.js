@@ -9,10 +9,12 @@ const confLabel = document.getElementById('confidence-label-val');
 
 const sse = new EventSource('/events');
 sse.onmessage = (e) => {
-  const [text, guide, dots, blur, fps, conf] = e.data.split('||');
+  const [text, guide, dots, blur, fps, conf, speak] = e.data.split('||');
   if (text && text !== lastText) {
     transcript.textContent = text;
     lastText = text;
+  }
+  if (speak === '1' && text) {
     speakText(text);
   }
   if (guide) guidance.textContent = guide;

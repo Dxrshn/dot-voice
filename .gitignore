@@ -4,6 +4,6 @@ __pycache__/
 venv/
 .pytest_cache/
 data/datasets/
-data/real/
+data/samples/
 *.egg-info/
 .DS_Store
