@@ -3,22 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DotVoice — Braille Reader</title>
+  <title>DotVoice — Braille Reader for Blind & Low-Vision Users</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+  <a href="#main" class="skip-link" style="position:absolute;left:-999px;top:0;background:#000;color:#fff;padding:8px;z-index:100;" onfocus="this.style.left='8px'" onblur="this.style.left='-999px'">Skip to controls</a>
+
   <header>
     <h1>DotVoice</h1>
-    <p class="subtitle">Real-time Braille to Speech</p>
+    <p class="subtitle">Eyes-free Braille reader for blind &amp; low-vision users</p>
   </header>
 
+  <p id="a11y-intro" class="sr-instructions" style="padding:8px 16px;font-size:0.95rem;">
+    Keyboard: <strong>U</strong> upload image, <strong>L</strong> start/stop live scan,
+    <strong>Space</strong> read text, <strong>R</strong> repeat, <strong>S</strong> speak status,
+    <strong>C</strong> high contrast.
+  </p>
+
   <div class="toggle-row">
-    <button class="toggle-btn" onclick="toggleContrast()" aria-label="Toggle high contrast mode">High Contrast</button>
+    <button class="toggle-btn" onclick="toggleContrast()" aria-label="Toggle high contrast mode (C)">High Contrast</button>
     <button class="toggle-btn" onclick="increaseFontSize()" aria-label="Increase text size">A+</button>
     <button class="toggle-btn" onclick="decreaseFontSize()" aria-label="Decrease text size">A-</button>
   </div>
 
-  <main>
+  <main id="main">
     <section class="video-panel" aria-label="Camera feed showing detected Braille dots">
       <img id="video" src="/video_feed" alt="Live camera feed with detected Braille dot overlays" />
     </section>
@@ -26,12 +34,12 @@
     <section class="info-panel">
       <div class="transcript-box" role="region" aria-label="Detected Braille text">
         <label id="transcript-label">Detected Text</label>
-        <p id="transcript" aria-live="polite" aria-atomic="true" aria-labelledby="transcript-label">Waiting for Braille...</p>
+        <p id="transcript" aria-live="assertive" aria-atomic="true" aria-labelledby="transcript-label">Waiting for Braille...</p>
       </div>
 
-      <div class="guidance-box" role="region" aria-label="Camera positioning guidance">
+      <div class="guidance-box" role="region" aria-label="Spoken camera positioning guidance">
         <label id="guidance-label">Camera Guidance</label>
-        <p id="guidance" aria-live="polite" aria-labelledby="guidance-label">Starting...</p>
+        <p id="guidance" aria-live="assertive" aria-labelledby="guidance-label">Live scan is OFF</p>
       </div>
 
       <div class="confidence-box" role="status" aria-label="Detection confidence">
@@ -42,29 +50,33 @@
         <span id="confidence-label-val">—</span>
       </div>
 
-      <div class="stats-box" aria-label="Detection statistics">
+      <div class="stats-box" aria-label="Detection statistics" aria-hidden="true">
         <span id="dots-count">Dots: 0</span>
         <span id="blur-score">Blur: 0.0</span>
         <span id="fps-display">FPS: —</span>
       </div>
 
-      <div class="controls" role="group" aria-label="Playback controls">
+      <div class="controls" role="group" aria-label="Controls">
+        <button id="btn-sample" onclick="readSample()" aria-label="Read built-in Braille sample (D)">
+          Read Sample <kbd>D</kbd>
+        </button>
+        <button id="btn-scan" onclick="toggleScan()" aria-label="Start or stop live camera scanning (L)">
+          Start Live Scan
+        </button>
         <button id="btn-read" onclick="readAloud()" aria-label="Read detected text aloud (Space)">
           Read Aloud <kbd>Space</kbd>
         </button>
         <button id="btn-repeat" onclick="repeatLast()" aria-label="Repeat last spoken text (R)">
           Repeat <kbd>R</kbd>
         </button>
+        <button id="btn-status" onclick="speakStatus()" aria-label="Speak current status (S)">
+          Status <kbd>S</kbd>
+        </button>
       </div>
-
-      <div class="upload-box" role="region" aria-label="Upload a Braille image">
-        <label class="upload-label-text">Or upload a Braille photo</label>
-        <label class="upload-btn" for="file-input" aria-label="Choose a Braille image file">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Choose file
-        </label>
-        <input type="file" id="file-input" accept="image/*" aria-label="Upload Braille image" onchange="uploadImage()" />
-        <p id="upload-result" aria-live="polite"></p>
+      <div class="upload-box" role="region" aria-label="Upload a Braille image" style="margin-top:16px;padding:14px;border:2px solid #4a9eff;border-radius:8px;background:rgba(74,158,255,0.08);">
+        <label id="upload-label" style="display:block;margin-bottom:8px;font-weight:bold;font-size:1rem;">Upload a Braille photo (press U)</label>
+        <input type="file" id="file-input" accept="image/*" aria-labelledby="upload-label" onchange="uploadImage()" style="display:block;font-size:1rem;padding:10px;width:100%;color:inherit;background:#fff;border:1px solid #888;border-radius:6px;cursor:pointer;" />
+        <p id="upload-result" aria-live="polite" style="margin-top:10px;font-weight:bold;"></p>
       </div>
     </section>
   </main>

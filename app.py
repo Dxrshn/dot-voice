@@ -12,13 +12,14 @@ app = Flask(__name__)
 _state = {
     'frame': None,
     'text': '',
-    'guidance': 'Starting...',
+    'guidance': 'Live scan is OFF',
     'dots': 0,
     'blur': 0.0,
     'fps': 0.0,
     'confidence': 0.0,
     'speak': False,
     'speak_text': '',
+    'live_scan': False,
     'lock': threading.Lock(),
 }
 
@@ -48,7 +49,10 @@ def _camera_loop():
                 fps_counter = 0
                 fps_start = time.time()
 
-            if frame_count % PROCESS_EVERY_N == 0:
+            with _state['lock']:
+                scanning = _state['live_scan']
+
+            if scanning and frame_count % PROCESS_EVERY_N == 0:
                 result = read_braille(frame)
                 dots = result['dots']
                 blur = result['quality'].get('blur', 0.0)
@@ -56,21 +60,16 @@ def _camera_loop():
                 confidence = result.get('confidence', 1.0)
                 action, payload = guidance_engine.evaluate(result['quality'], dots, text, confidence)
 
-                overlay = result['overlay']
-                overlay_bgr = cv2.cvtColor(overlay, cv2.COLOR_GRAY2BGR) if len(overlay.shape) == 2 else overlay
-                h, w = overlay_bgr.shape[:2]
-                fh, fw = frame.shape[:2]
-                annotated = frame.copy()
-                annotated[0:min(h, fh), 0:min(w, fw)] = overlay_bgr[0:min(h, fh), 0:min(w, fw)]
-
                 for x, y, r in dots:
                     cv2.circle(frame, (int(x), int(y)), int(r) + 3, (0, 0, 255), 2)
 
                 if action == 'read':
-                    guidance_msg = f"Reading: {payload}"
+                    guidance_msg = f"Captured: {payload}. Scan stopped. Press L to read again."
                     display_text = payload
-                    speak_text = payload
+                    speak_text = f"{payload}. Captured. Press L to read again."
                     speak_now = True
+                    with _state['lock']:
+                        _state['live_scan'] = False
                 elif action == 'guide':
                     guidance_msg = payload
                     display_text = ''
@@ -110,9 +109,33 @@ def _gen_frames():
         time.sleep(0.033)
 
 
+def _read_image_file(img):
+    from dotvoice.preprocess import to_gray, preprocess
+    from dotvoice.detect import detect_dots
+    from dotvoice.grid import segment_grid
+    from dotvoice.decode import decode_cells
+    proc = preprocess(to_gray(img))
+    dots = detect_dots(proc)
+    text = decode_cells(segment_grid(dots)).strip()
+    return text, len(dots)
+
+
 @app.route('/video_feed')
 def video_feed():
     return Response(_gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/toggle_scan', methods=['POST'])
+def toggle_scan():
+    with _state['lock']:
+        _state['live_scan'] = not _state['live_scan']
+        on = _state['live_scan']
+        if not on:
+            _state['text'] = ''
+            _state['guidance'] = 'Live scan is OFF'
+            _state['speak'] = False
+            _state['speak_text'] = ''
+    return jsonify({'live_scan': on})
 
 
 @app.route('/events')
@@ -143,10 +166,6 @@ def events():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    from dotvoice.preprocess import to_gray, preprocess
-    from dotvoice.detect import detect_dots
-    from dotvoice.grid import segment_grid
-    from dotvoice.decode import decode_cells
     file = request.files.get('image')
     if file is None:
         return jsonify({'error': 'no file'}), 400
@@ -154,15 +173,17 @@ def upload():
     img = cv2.imdecode(data, cv2.IMREAD_COLOR)
     if img is None:
         return jsonify({'error': 'bad image'}), 400
-    proc = preprocess(to_gray(img))
-    dots = detect_dots(proc)
-    cells = segment_grid(dots)
-    text = decode_cells(cells).strip()
-    return jsonify({
-        'text': text,
-        'dots': len(dots),
-        'confidence': 1.0,
-    })
+    text, n = _read_image_file(img)
+    return jsonify({'text': text, 'dots': n, 'confidence': 1.0})
+
+
+@app.route('/sample', methods=['POST'])
+def sample():
+    img = cv2.imread('data/real/joel.png')
+    if img is None:
+        return jsonify({'error': 'sample not found'}), 404
+    text, n = _read_image_file(img)
+    return jsonify({'text': text, 'dots': n, 'confidence': 1.0})
 
 
 @app.route('/')
