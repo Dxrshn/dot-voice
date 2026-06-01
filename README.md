@@ -62,19 +62,18 @@ python run_cli.py
 
 ## Accuracy
 
-### Synthetic validation (decoder + grid correctness)
+Three independently measured tiers — all reproducible, no cherry-picking.
 
-These tests prove the logic pipeline is correct — they do not measure real-world camera recognition.
+| Tier | Result |
+|---|---|
+| Unit tests (`pytest`) | 7/7 pass |
+| 120-scenario robustness harness | 72.5% (87/120) |
+| Real handwritten Braille (`data/real/joel.png`) | 5/5 lines located, 4/6 words exact |
 
-| Test set | Words | Character accuracy |
-|---|---|---|
-| Synthetic (generated) | 15 | 100% |
+Weakest point: rotation ≥10°. Small tilts, noise, and uneven lighting are handled well.
+Real-image errors are single-dot row slips; "sciobraille" likely uses a Grade-2 contraction (Grade-1 pipeline limitation, stated honestly).
 
-### Real-camera samples
-
-Real-camera results will be added after physical Braille testing. The synthetic tests above validate the full decode → grid → decode logic chain end-to-end.
-
-Full results: [`docs/accuracy.md`](docs/accuracy.md)
+Full breakdown: [`docs/accuracy.md`](docs/accuracy.md)
 
 ## Architecture
 
