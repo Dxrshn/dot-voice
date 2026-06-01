@@ -9,6 +9,9 @@ Blind and low-vision users rely on Braille, but pointing a camera at a Braille p
 ## Features
 
 - Reads REAL physical handwritten Braille from camera — validated on the organizer's own handwritten test image
+- **Capture-and-lock scanning** — announces a confident reading once, then stops, so a blind user gets one clear answer instead of a continuous stream
+- **One-key eyes-free sample read** — press D to hear Braille read aloud with no file dialog
+- **Full voice + keyboard control** — D sample, U upload, L scan, Space read, R repeat, S status; spoken feedback on every action; operable without sight
 - Real-time dot detection and Grade-1 Braille decoding
 - Spoken camera guidance: "Move closer", "Hold steady", "Braille detected, reading now"
 - Speech output: browser Web Speech API (web app) and offline `pyttsx3` (CLI)
