@@ -1,23 +1,23 @@
 # Scenario Stress Test Results
 
-**Overall: 101/120 (84.2%)**
+**Overall: 91/120 (75.8%)**
 
 ## Per-condition pass rate
 
 | Condition | Pass | Total | Rate |
 |---|---|---|---|
-| `blur_7x7` | 10 | 10 | 100% |
-| `clean` | 10 | 10 | 100% |
-| `lighting_gradient` | 10 | 10 | 100% |
-| `noise_sd=10` | 10 | 10 | 100% |
-| `noise_sd=25` | 10 | 10 | 100% |
-| `noise_sd=5` | 10 | 10 | 100% |
-| `rot=+10deg` | 8 | 10 | 80% |
+| `blur_7x7` | 8 | 10 | 80% |
+| `clean` | 8 | 10 | 80% |
+| `lighting_gradient` | 8 | 10 | 80% |
+| `noise_sd=10` | 8 | 10 | 80% |
+| `noise_sd=25` | 8 | 10 | 80% |
+| `noise_sd=5` | 8 | 10 | 80% |
+| `rot=+10deg` | 7 | 10 | 70% |
 | `rot=+2deg` | 8 | 10 | 80% |
-| `rot=+5deg` | 8 | 10 | 80% |
+| `rot=+5deg` | 7 | 10 | 70% |
 | `rot=-10deg` | 5 | 10 | 50% |
-| `rot=-2deg` | 6 | 10 | 60% |
-| `rot=-5deg` | 6 | 10 | 60% |
+| `rot=-2deg` | 8 | 10 | 80% |
+| `rot=-5deg` | 8 | 10 | 80% |
 
 ## Per-word breakdown
 
@@ -27,9 +27,9 @@
 | `hello` | `noise_sd=5` | `hello` | PASS |
 | `hello` | `noise_sd=10` | `hello` | PASS |
 | `hello` | `noise_sd=25` | `hello` | PASS |
-| `hello` | `rot=-10deg` | `` | FAIL |
-| `hello` | `rot=-5deg` | `` | FAIL |
-| `hello` | `rot=-2deg` | `` | FAIL |
+| `hello` | `rot=-10deg` | `:ello` | FAIL |
+| `hello` | `rot=-5deg` | `hello` | PASS |
+| `hello` | `rot=-2deg` | `hello` | PASS |
 | `hello` | `rot=+2deg` | `hello` | PASS |
 | `hello` | `rot=+5deg` | `hello` | PASS |
 | `hello` | `rot=+10deg` | `hello` | PASS |
@@ -39,9 +39,9 @@
 | `world` | `noise_sd=5` | `world` | PASS |
 | `world` | `noise_sd=10` | `world` | PASS |
 | `world` | `noise_sd=25` | `world` | PASS |
-| `world` | `rot=-10deg` | `` | FAIL |
-| `world` | `rot=-5deg` | `` | FAIL |
-| `world` | `rot=-2deg` | `` | FAIL |
+| `world` | `rot=-10deg` | `.orl?` | FAIL |
+| `world` | `rot=-5deg` | `world` | PASS |
+| `world` | `rot=-2deg` | `world` | PASS |
 | `world` | `rot=+2deg` | `world` | PASS |
 | `world` | `rot=+5deg` | `world` | PASS |
 | `world` | `rot=+10deg` | `world` | PASS |
@@ -51,26 +51,26 @@
 | `hi` | `noise_sd=5` | `hi` | PASS |
 | `hi` | `noise_sd=10` | `hi` | PASS |
 | `hi` | `noise_sd=25` | `hi` | PASS |
-| `hi` | `rot=-10deg` | `` | FAIL |
-| `hi` | `rot=-5deg` | `` | FAIL |
-| `hi` | `rot=-2deg` | `` | FAIL |
+| `hi` | `rot=-10deg` | `hi` | PASS |
+| `hi` | `rot=-5deg` | `hi` | PASS |
+| `hi` | `rot=-2deg` | `hi` | PASS |
 | `hi` | `rot=+2deg` | `hi` | PASS |
 | `hi` | `rot=+5deg` | `hi` | PASS |
 | `hi` | `rot=+10deg` | `hi` | PASS |
 | `hi` | `lighting_gradient` | `hi` | PASS |
 | `hi` | `blur_7x7` | `hi` | PASS |
-| `cat` | `clean` | `cat` | PASS |
-| `cat` | `noise_sd=5` | `cat` | PASS |
-| `cat` | `noise_sd=10` | `cat` | PASS |
-| `cat` | `noise_sd=25` | `cat` | PASS |
-| `cat` | `rot=-10deg` | `cat` | PASS |
-| `cat` | `rot=-5deg` | `cat` | PASS |
-| `cat` | `rot=-2deg` | `cat` | PASS |
-| `cat` | `rot=+2deg` | `cat` | PASS |
-| `cat` | `rot=+5deg` | `cat` | PASS |
-| `cat` | `rot=+10deg` | `cat` | PASS |
-| `cat` | `lighting_gradient` | `cat` | PASS |
-| `cat` | `blur_7x7` | `cat` | PASS |
+| `cat` | `clean` | `:at` | FAIL |
+| `cat` | `noise_sd=5` | `:at` | FAIL |
+| `cat` | `noise_sd=10` | `:at` | FAIL |
+| `cat` | `noise_sd=25` | `:at` | FAIL |
+| `cat` | `rot=-10deg` | `:at` | FAIL |
+| `cat` | `rot=-5deg` | `:at` | FAIL |
+| `cat` | `rot=-2deg` | `:at` | FAIL |
+| `cat` | `rot=+2deg` | `:at` | FAIL |
+| `cat` | `rot=+5deg` | `:at` | FAIL |
+| `cat` | `rot=+10deg` | `` | FAIL |
+| `cat` | `lighting_gradient` | `:at` | FAIL |
+| `cat` | `blur_7x7` | `:at` | FAIL |
 | `dog` | `clean` | `dog` | PASS |
 | `dog` | `noise_sd=5` | `dog` | PASS |
 | `dog` | `noise_sd=10` | `dog` | PASS |
@@ -83,37 +83,37 @@
 | `dog` | `rot=+10deg` | `dog` | PASS |
 | `dog` | `lighting_gradient` | `dog` | PASS |
 | `dog` | `blur_7x7` | `dog` | PASS |
-| `read` | `clean` | `read` | PASS |
-| `read` | `noise_sd=5` | `read` | PASS |
-| `read` | `noise_sd=10` | `read` | PASS |
-| `read` | `noise_sd=25` | `read` | PASS |
-| `read` | `rot=-10deg` | `read` | PASS |
-| `read` | `rot=-5deg` | `read` | PASS |
-| `read` | `rot=-2deg` | `read` | PASS |
-| `read` | `rot=+2deg` | `` | FAIL |
+| `read` | `clean` | `rea?` | FAIL |
+| `read` | `noise_sd=5` | `rea?` | FAIL |
+| `read` | `noise_sd=10` | `rea?` | FAIL |
+| `read` | `noise_sd=25` | `rea?` | FAIL |
+| `read` | `rot=-10deg` | `rea?` | FAIL |
+| `read` | `rot=-5deg` | `rea?` | FAIL |
+| `read` | `rot=-2deg` | `rea?` | FAIL |
+| `read` | `rot=+2deg` | `rea?` | FAIL |
 | `read` | `rot=+5deg` | `` | FAIL |
-| `read` | `rot=+10deg` | `read` | PASS |
-| `read` | `lighting_gradient` | `read` | PASS |
-| `read` | `blur_7x7` | `read` | PASS |
+| `read` | `rot=+10deg` | `rea?` | FAIL |
+| `read` | `lighting_gradient` | `rea?` | FAIL |
+| `read` | `blur_7x7` | `rea?` | FAIL |
 | `yes` | `clean` | `yes` | PASS |
 | `yes` | `noise_sd=5` | `yes` | PASS |
 | `yes` | `noise_sd=10` | `yes` | PASS |
 | `yes` | `noise_sd=25` | `yes` | PASS |
-| `yes` | `rot=-10deg` | `` | FAIL |
+| `yes` | `rot=-10deg` | `yes` | PASS |
 | `yes` | `rot=-5deg` | `yes` | PASS |
 | `yes` | `rot=-2deg` | `yes` | PASS |
 | `yes` | `rot=+2deg` | `yes` | PASS |
-| `yes` | `rot=+5deg` | `yes` | PASS |
-| `yes` | `rot=+10deg` | `` | FAIL |
+| `yes` | `rot=+5deg` | `` | FAIL |
+| `yes` | `rot=+10deg` | `yes` | PASS |
 | `yes` | `lighting_gradient` | `yes` | PASS |
 | `yes` | `blur_7x7` | `yes` | PASS |
 | `no` | `clean` | `no` | PASS |
 | `no` | `noise_sd=5` | `no` | PASS |
 | `no` | `noise_sd=10` | `no` | PASS |
 | `no` | `noise_sd=25` | `no` | PASS |
-| `no` | `rot=-10deg` | `` | FAIL |
-| `no` | `rot=-5deg` | `` | FAIL |
-| `no` | `rot=-2deg` | `` | FAIL |
+| `no` | `rot=-10deg` | `no` | PASS |
+| `no` | `rot=-5deg` | `no` | PASS |
+| `no` | `rot=-2deg` | `no` | PASS |
 | `no` | `rot=+2deg` | `no` | PASS |
 | `no` | `rot=+5deg` | `no` | PASS |
 | `no` | `rot=+10deg` | `no` | PASS |
@@ -123,12 +123,12 @@
 | `abc` | `noise_sd=5` | `abc` | PASS |
 | `abc` | `noise_sd=10` | `abc` | PASS |
 | `abc` | `noise_sd=25` | `abc` | PASS |
-| `abc` | `rot=-10deg` | `abc` | PASS |
+| `abc` | `rot=-10deg` | `` | FAIL |
 | `abc` | `rot=-5deg` | `abc` | PASS |
 | `abc` | `rot=-2deg` | `abc` | PASS |
 | `abc` | `rot=+2deg` | `abc` | PASS |
 | `abc` | `rot=+5deg` | `abc` | PASS |
-| `abc` | `rot=+10deg` | `abc` | PASS |
+| `abc` | `rot=+10deg` | `` | FAIL |
 | `abc` | `lighting_gradient` | `abc` | PASS |
 | `abc` | `blur_7x7` | `abc` | PASS |
 | `dots` | `clean` | `dots` | PASS |
@@ -138,24 +138,8 @@
 | `dots` | `rot=-10deg` | `dots` | PASS |
 | `dots` | `rot=-5deg` | `dots` | PASS |
 | `dots` | `rot=-2deg` | `dots` | PASS |
-| `dots` | `rot=+2deg` | `` | FAIL |
-| `dots` | `rot=+5deg` | `` | FAIL |
-| `dots` | `rot=+10deg` | `` | FAIL |
+| `dots` | `rot=+2deg` | `dots` | PASS |
+| `dots` | `rot=+5deg` | `dots` | PASS |
+| `dots` | `rot=+10deg` | `dots` | PASS |
 | `dots` | `lighting_gradient` | `dots` | PASS |
 | `dots` | `blur_7x7` | `dots` | PASS |
-
-## Noise Gate: Recall + Rejection
-
-| Metric | Result | Threshold |
-|---|---|---|
-| Real word recall | 100% (10/10) | ≥90% |
-| Junk rejection | 0% (0/10) | ≥90% |
-| Gate | FAIL | Both must pass |
-
-## Noise Gate: Recall + Rejection
-
-| Metric | Result | Threshold |
-|---|---|---|
-| Real word recall | 100% (10/10) | ≥90% |
-| Junk rejection | 0% (0/10) | ≥90% |
-| Gate | FAIL | Both must pass |

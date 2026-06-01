@@ -232,6 +232,64 @@ kbd {
   margin-left: 4px;
 }
 
+.upload-box {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.upload-label-text {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  flex: 1;
+  min-width: 120px;
+}
+
+#file-input {
+  display: none;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--accent2);
+  color: var(--accent2);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.upload-btn:hover {
+  background: var(--accent2);
+  color: #000;
+}
+
+.upload-btn:focus-visible {
+  outline: 3px solid var(--accent2);
+  outline-offset: 3px;
+}
+
+#upload-result {
+  font-size: 0.8rem;
+  color: var(--accent);
+  width: 100%;
+  min-height: 1rem;
+  margin-top: 0.1rem;
+}
+
 @media (max-width: 800px) {
   main { grid-template-columns: 1fr; }
   #transcript { font-size: 1.5rem; }

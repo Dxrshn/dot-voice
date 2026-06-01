@@ -1,7 +1,8 @@
 import threading
 import time
 import cv2
-from flask import Flask, Response, render_template, stream_with_context
+import numpy as np
+from flask import Flask, Response, render_template, stream_with_context, request, jsonify
 from dotvoice.capture import Camera
 from dotvoice.pipeline import read_braille
 from dotvoice.guidance import GuidanceEngine
@@ -17,6 +18,7 @@ _state = {
     'fps': 0.0,
     'confidence': 0.0,
     'speak': False,
+    'speak_text': '',
     'lock': threading.Lock(),
 }
 
@@ -25,7 +27,6 @@ MIN_DOTS = 3
 
 
 def _camera_loop():
-    import time
     guidance_engine = GuidanceEngine()
     frame_count = 0
     fps_counter = 0
@@ -60,27 +61,31 @@ def _camera_loop():
                 h, w = overlay_bgr.shape[:2]
                 fh, fw = frame.shape[:2]
                 annotated = frame.copy()
-                annotated[0:min(h,fh), 0:min(w,fw)] = overlay_bgr[0:min(h,fh), 0:min(w,fw)]
+                annotated[0:min(h, fh), 0:min(w, fw)] = overlay_bgr[0:min(h, fh), 0:min(w, fw)]
 
                 for x, y, r in dots:
-                    cv2.circle(frame, (int(x), int(y)), int(r)+3, (0,0,255), 2)
+                    cv2.circle(frame, (int(x), int(y)), int(r) + 3, (0, 0, 255), 2)
 
                 if action == 'read':
                     guidance_msg = f"Reading: {payload}"
                     display_text = payload
+                    speak_text = payload
                     speak_now = True
                 elif action == 'guide':
                     guidance_msg = payload
                     display_text = ''
-                    speak_now = False
+                    speak_text = payload
+                    speak_now = (payload != _state['guidance'])
                 else:
                     guidance_msg = "Stabilizing..."
                     display_text = ''
+                    speak_text = ''
                     speak_now = False
 
                 with _state['lock']:
                     _state['text'] = display_text
                     _state['guidance'] = guidance_msg
+                    _state['speak_text'] = speak_text
                     _state['dots'] = len(dots)
                     _state['blur'] = blur
                     _state['confidence'] = confidence
@@ -124,15 +129,40 @@ def events():
                 fps = _state['fps']
                 confidence = _state['confidence']
                 speak = _state['speak']
+                speak_text = _state.get('speak_text', '')
                 if speak:
                     _state['speak'] = False
             if text != last_text or guidance != last_guidance:
                 last_text = text
                 last_guidance = guidance
-                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}||{confidence:.2f}||{'1' if speak else '0'}\n\n"
+                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}||{confidence:.2f}||{'1' if speak else '0'}||{speak_text}\n\n"
                 yield data
             time.sleep(0.2)
     return Response(stream_with_context(generate()), mimetype='text/event-stream')
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    from dotvoice.preprocess import to_gray, preprocess
+    from dotvoice.detect import detect_dots
+    from dotvoice.grid import segment_grid
+    from dotvoice.decode import decode_cells
+    file = request.files.get('image')
+    if file is None:
+        return jsonify({'error': 'no file'}), 400
+    data = np.frombuffer(file.read(), np.uint8)
+    img = cv2.imdecode(data, cv2.IMREAD_COLOR)
+    if img is None:
+        return jsonify({'error': 'bad image'}), 400
+    proc = preprocess(to_gray(img))
+    dots = detect_dots(proc)
+    cells = segment_grid(dots)
+    text = decode_cells(cells).strip()
+    return jsonify({
+        'text': text,
+        'dots': len(dots),
+        'confidence': 1.0,
+    })
 
 
 @app.route('/')

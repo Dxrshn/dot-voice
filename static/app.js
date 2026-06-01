@@ -7,15 +7,26 @@ const fpsEl = document.getElementById('fps-display');
 const confBar = document.getElementById('confidence-bar');
 const confLabel = document.getElementById('confidence-label-val');
 
+let speechUnlocked = false;
+function unlockSpeech() {
+  if (speechUnlocked) return;
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance('DotVoice ready'));
+    speechUnlocked = true;
+  }
+}
+document.addEventListener('click', unlockSpeech);
+document.addEventListener('keydown', unlockSpeech);
+
 const sse = new EventSource('/events');
 sse.onmessage = (e) => {
-  const [text, guide, dots, blur, fps, conf, speak] = e.data.split('||');
+  const [text, guide, dots, blur, fps, conf, speak, toSpeak] = e.data.split('||');
   if (text && text !== lastText) {
     transcript.textContent = text;
     lastText = text;
   }
-  if (speak === '1' && text) {
-    speakText(text);
+  if (speak === '1' && toSpeak) {
+    speakText(toSpeak);
   }
   if (guide) guidance.textContent = guide;
   dotsEl.textContent = `Dots: ${dots}`;
@@ -42,6 +53,26 @@ function speakText(text) {
 
 function readAloud() { speakText(lastText); }
 function repeatLast() { speakText(lastText); }
+
+function uploadImage() {
+  const input = document.getElementById('file-input');
+  const out = document.getElementById('upload-result');
+  if (!input.files || !input.files[0]) return;
+  out.textContent = 'Reading...';
+  const fd = new FormData();
+  fd.append('image', input.files[0]);
+  fetch('/upload', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { out.textContent = 'Error: ' + d.error; return; }
+      const txt = d.text || '(no text detected)';
+      out.textContent = `Result: ${txt}  (dots: ${d.dots}, confidence: ${d.confidence})`;
+      lastText = txt;
+      transcript.textContent = txt;
+      speakText(txt);
+    })
+    .catch(() => { out.textContent = 'Upload failed.'; });
+}
 
 function toggleContrast() {
   document.body.classList.toggle('high-contrast');
