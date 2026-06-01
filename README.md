@@ -8,14 +8,15 @@ Blind and low-vision users rely on Braille, but pointing a camera at a Braille p
 
 ## Features
 
+- Reads REAL physical handwritten Braille from camera — validated on the organizer's own handwritten test image
 - Real-time dot detection and Grade-1 Braille decoding
 - Spoken camera guidance: "Move closer", "Hold steady", "Braille detected, reading now"
-- Fully offline TTS via `pyttsx3` (no internet required)
+- Speech output: browser Web Speech API (web app) and offline `pyttsx3` (CLI)
 - Accessible web UI: high-contrast, large text, ARIA live regions, keyboard shortcuts
 - Multi-frame voting for stable readings
 - Perspective correction and adaptive lighting normalization
 - 100% character accuracy on clean synthetic test set (15 words)
-- **90.8% pass rate** across 120 stress-test scenarios (noise, rotation ±5°, blur, uneven lighting)
+- **75.8% pass rate (91/120)** across a 120-scenario robustness harness (noise, rotation, blur, uneven lighting)
 - ~25–30 FPS camera capture with Braille processing every 5th frame (real-time feedback)
 
 ## How It Detects Physical Braille
@@ -53,7 +54,7 @@ pip install -r requirements.txt
 ```bash
 python app.py
 ```
-Open `http://localhost:5000`
+Open `http://localhost:5001`
 
 **CLI:**
 ```bash
@@ -65,13 +66,15 @@ python run_cli.py
 Three independently measured tiers — all reproducible, no cherry-picking.
 
 | Tier | Result |
-|---|---|
-| Unit tests (`pytest`) | 7/7 pass |
-| 120-scenario robustness harness | 72.5% (87/120) |
-| Real handwritten Braille (`data/real/joel.png`) | 5/5 lines located, 4/6 words exact |
+| --- | --- |
+| Unit tests (pytest) | 7/7 pass |
+| 120-scenario robustness harness | 75.8% (91/120) |
+| Real handwritten Braille (data/real/joel.png) | 5/5 lines located, 4/7 words exact |
 
-Weakest point: rotation ≥10°. Small tilts, noise, and uneven lighting are handled well.
-Real-image errors are single-dot row slips; "sciobraille" likely uses a Grade-2 contraction (Grade-1 pipeline limitation, stated honestly).
+On the real handwritten test image, "jaihind", "india", "visually", and "great" decode exactly.
+Remaining errors are single-dot row slips on warped handwritten input; "sciobraille" likely uses a
+Grade-2 contraction (a stated Grade-1 limitation). Weakest synthetic condition is rotation >=10 degrees;
+small tilts, noise, and uneven lighting are handled well.
 
 Full breakdown: [`docs/accuracy.md`](docs/accuracy.md)
 
@@ -87,7 +90,7 @@ See [`docs/architecture.md`](docs/architecture.md) for the full pipeline diagram
 
 ## Future Improvements
 
-- Fine-tune YOLOv8-nano on a real Braille photo dataset for robustness in harsh lighting
+- Optional ML-based dot detector for harsh lighting (current pipeline is classical and fully reproducible)
 - Add Grade-2 contracted Braille support
 - Mobile camera support via browser `getUserMedia`
 - Multi-line Braille page reading

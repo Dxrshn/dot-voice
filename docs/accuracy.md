@@ -7,7 +7,7 @@ so all results are fully reproducible.
 7/7 passing (`pytest`). Covers decoder, capital/number state machine, and synthetic grid round-trips.
 
 ## 2. Synthetic robustness harness (`scripts/scenario_test.py`)
-120 scenarios = 10 words x 12 conditions. **Overall: 87/120 (72.5%).**
+120 scenarios = 10 words x 12 conditions. **Overall: 91/120 (75.8%).**
 
 | Condition          | Pass/Total |
 |--------------------|------------|
@@ -23,7 +23,7 @@ Weakest point is large rotation (>=10deg); small tilts and lighting/noise are ha
 
 ## 3. Real handwritten Braille (judge test image, `data/real/joel.png`)
 Input: handwritten Braille, 5 lines, photographed under side-lighting.
-**Result: 5/5 lines located, 4/6 words exact** (jaihind, india, visually, great).
+**Result: 5/5 lines located, 4/7 words exact** (jaihind, india, visually, great).
 Two single-dot row slips remain (saiobraille, impailed) and one first-cell error (mr?ject vs project).
 "sciobraille" may use a Grade-2 contraction, which this Grade-1 pipeline does not target.
 
