@@ -29,11 +29,13 @@ Blind and low-vision users rely on Braille, but pointing a camera at a Braille p
 ## Tech Stack
 
 - Python 3.10+
-- OpenCV — image processing and dot detection
-- NumPy / SciPy / scikit-image — numerical processing
-- Flask — web server and MJPEG stream
+- Classical, deterministic CV pipeline — no trained model or weights required
+- OpenCV — image processing, dot detection, deskew
+- NumPy / SciPy / scikit-image — numerical and spatial processing
+- Flask — web server, MJPEG camera stream, Server-Sent Events
 - pyttsx3 — offline text-to-speech
 - Web Speech API — browser-side TTS
+- pytest — unit tests + scenario pass-rate harness
 
 ## Setup
 
