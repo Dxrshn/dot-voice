@@ -12,32 +12,47 @@
     <p class="subtitle">Real-time Braille to Speech</p>
   </header>
 
+  <div class="toggle-row">
+    <button class="toggle-btn" onclick="toggleContrast()" aria-label="Toggle high contrast mode">High Contrast</button>
+    <button class="toggle-btn" onclick="increaseFontSize()" aria-label="Increase text size">A+</button>
+    <button class="toggle-btn" onclick="decreaseFontSize()" aria-label="Decrease text size">A-</button>
+  </div>
+
   <main>
-    <section class="video-panel" aria-label="Camera feed">
-      <img id="video" src="/video_feed" alt="Live camera feed showing detected Braille dots" />
+    <section class="video-panel" aria-label="Camera feed showing detected Braille dots">
+      <img id="video" src="/video_feed" alt="Live camera feed with detected Braille dot overlays" />
     </section>
 
     <section class="info-panel">
-      <div class="transcript-box" aria-live="polite" aria-atomic="true" role="status">
-        <label>Detected Text</label>
-        <p id="transcript">Waiting for Braille...</p>
+      <div class="transcript-box" role="region" aria-label="Detected Braille text">
+        <label id="transcript-label">Detected Text</label>
+        <p id="transcript" aria-live="polite" aria-atomic="true" aria-labelledby="transcript-label">Waiting for Braille...</p>
       </div>
 
-      <div class="guidance-box" aria-live="polite" role="status">
-        <label>Camera Guidance</label>
-        <p id="guidance">Starting...</p>
+      <div class="guidance-box" role="region" aria-label="Camera positioning guidance">
+        <label id="guidance-label">Camera Guidance</label>
+        <p id="guidance" aria-live="polite" aria-labelledby="guidance-label">Starting...</p>
       </div>
 
-      <div class="stats-box" aria-label="Detection stats">
+      <div class="confidence-box" role="status" aria-label="Detection confidence">
+        <label>Confidence</label>
+        <div id="confidence-bar-wrap">
+          <div id="confidence-bar"></div>
+        </div>
+        <span id="confidence-label-val">—</span>
+      </div>
+
+      <div class="stats-box" aria-label="Detection statistics">
         <span id="dots-count">Dots: 0</span>
         <span id="blur-score">Blur: 0.0</span>
+        <span id="fps-display">FPS: —</span>
       </div>
 
-      <div class="controls">
-        <button id="btn-read" onclick="readAloud()" aria-label="Read detected text aloud">
+      <div class="controls" role="group" aria-label="Playback controls">
+        <button id="btn-read" onclick="readAloud()" aria-label="Read detected text aloud (Space)">
           Read Aloud <kbd>Space</kbd>
         </button>
-        <button id="btn-repeat" onclick="repeatLast()" aria-label="Repeat last spoken text">
+        <button id="btn-repeat" onclick="repeatLast()" aria-label="Repeat last spoken text (R)">
           Repeat <kbd>R</kbd>
         </button>
       </div>

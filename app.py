@@ -15,6 +15,7 @@ _state = {
     'dots': 0,
     'blur': 0.0,
     'fps': 0.0,
+    'confidence': 0.0,
     'lock': threading.Lock(),
 }
 
@@ -50,7 +51,8 @@ def _camera_loop():
                 dots = result['dots']
                 blur = result['quality'].get('blur', 0.0)
                 text = result['text'] if len(dots) >= MIN_DOTS else ''
-                action, payload = guidance_engine.evaluate(result['quality'], dots, text)
+                confidence = result.get('confidence', 1.0)
+                action, payload = guidance_engine.evaluate(result['quality'], dots, text, confidence)
 
                 overlay = result['overlay']
                 overlay_bgr = cv2.cvtColor(overlay, cv2.COLOR_GRAY2BGR) if len(overlay.shape) == 2 else overlay
@@ -77,6 +79,7 @@ def _camera_loop():
                     _state['guidance'] = guidance_msg
                     _state['dots'] = len(dots)
                     _state['blur'] = blur
+                    _state['confidence'] = confidence
 
             _, jpeg = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
             with _state['lock']:
@@ -114,10 +117,11 @@ def events():
                 dots = _state['dots']
                 blur = _state['blur']
                 fps = _state['fps']
+                confidence = _state['confidence']
             if text != last_text or guidance != last_guidance:
                 last_text = text
                 last_guidance = guidance
-                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}\n\n"
+                data = f"data: {text}||{guidance}||{dots}||{blur:.1f}||{fps:.1f}||{confidence:.2f}\n\n"
                 yield data
             time.sleep(0.2)
     return Response(stream_with_context(generate()), mimetype='text/event-stream')

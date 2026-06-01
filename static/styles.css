@@ -102,6 +102,47 @@ main {
   min-height: 1.5rem;
 }
 
+.confidence-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.confidence-box label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+#confidence-bar-wrap {
+  flex: 1;
+  background: var(--border);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+#confidence-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.3s, background 0.3s;
+}
+
+#confidence-label-val {
+  font-size: 0.85rem;
+  color: var(--text);
+  min-width: 3rem;
+  text-align: right;
+}
+
 .stats-box {
   display: flex;
   gap: 1rem;
@@ -129,9 +170,45 @@ button {
   transition: opacity 0.15s;
 }
 
-button:focus-visible {
+button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+*:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+body.high-contrast {
+  --bg: #000;
+  --surface: #111;
+  --border: #fff;
+  --text: #fff;
+  --accent: #ffff00;
+  --accent2: #00ffff;
+  --muted: #ccc;
+}
+
+.toggle-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 2rem 0.5rem;
+}
+
+.toggle-btn {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  flex: none;
 }
 
 #btn-read {

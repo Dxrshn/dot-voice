@@ -3,13 +3,14 @@ MIN_COVERAGE = 0.005
 MAX_COVERAGE = 0.6
 MIN_DOTS = 3
 STABILITY_K = 4
+MIN_CONFIDENCE = 0.35
 
 
 class GuidanceEngine:
     def __init__(self):
         self._history = []
 
-    def evaluate(self, quality, dots, text):
+    def evaluate(self, quality, dots, text, confidence=1.0):
         blur = quality.get('blur', 0)
         cov = quality.get('coverage', 0)
         n_dots = len(dots)
@@ -33,6 +34,10 @@ class GuidanceEngine:
         if not text or text.strip() == '':
             self._history.clear()
             return 'guide', "Move closer."
+
+        if confidence < MIN_CONFIDENCE:
+            self._history.clear()
+            return 'guide', "Re-scan suggested. Adjust camera angle."
 
         self._history.append(text)
         if len(self._history) > STABILITY_K:

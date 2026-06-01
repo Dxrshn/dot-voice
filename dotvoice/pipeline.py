@@ -1,7 +1,7 @@
 from collections import Counter
 from dotvoice.preprocess import preprocess, to_gray
-from dotvoice.detect import detect_dots, draw_debug
-from dotvoice.grid import segment_grid, estimate_rotation, rotate_dots
+from dotvoice.detect import detect_dots, draw_debug, draw_debug_confidence
+from dotvoice.grid import segment_grid, estimate_rotation, rotate_dots, cell_confidence, _estimate_unit
 from dotvoice.decode import decode_cells
 from dotvoice.quality import blur_score, quality_report
 
@@ -29,7 +29,12 @@ def read_braille(image):
     cells = segment_grid(dots_aligned)
     text = decode_cells(cells)
 
-    if text and text.strip():
+    u = _estimate_unit(dots_aligned) if dots_aligned else 20.0
+    dot_positions = [(x, y) for x, y, _ in dots_aligned]
+    confidence = cell_confidence(dot_positions, u) if dot_positions else 0.0
+    quality['confidence'] = confidence
+
+    if text and text.strip() and confidence > 0.3:
         _vote_buffer.append(text)
         if len(_vote_buffer) > VOTE_WINDOW:
             _vote_buffer.pop(0)
@@ -37,8 +42,10 @@ def read_braille(image):
             text = Counter(_vote_buffer).most_common(1)[0][0]
     else:
         _vote_buffer.clear()
+        if confidence <= 0.3:
+            text = ''
 
-    overlay = draw_debug(processed, dots)
+    overlay = draw_debug_confidence(processed, dots, confidence)
     return {
         'text': text,
         'cells': cells,
@@ -46,4 +53,5 @@ def read_braille(image):
         'quality': quality,
         'overlay': overlay,
         'processed': processed,
+        'confidence': confidence,
     }

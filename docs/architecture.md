@@ -50,6 +50,23 @@ text unstable     →  "Adjust camera for clearer Braille."
 text stable (K=4) →  "Braille detected." + read text aloud
 ```
 
+## What We Built vs What We Reused
+
+| Component | Status | Notes |
+|---|---|---|
+| Grade-1 Braille decoder | **Built** | `dotvoice/decode.py`, `dotvoice/mapping.py` |
+| Grid segmentation | **Built** | `dotvoice/grid.py` — unit estimation, clustering, deskew |
+| Rotation estimation | **Built** | `dotvoice/grid.py` — KNN angle estimation |
+| Camera guidance engine | **Built** | `dotvoice/guidance.py` — state machine |
+| Synthetic image generator | **Built** | `dotvoice/synth.py` |
+| Per-cell confidence | **Built** | `dotvoice/grid.py` — lattice snap scoring |
+| Multi-frame voting | **Built** | `dotvoice/pipeline.py` |
+| OpenCV | **Reused** | Blob detection, CLAHE, perspective warp |
+| pyttsx3 | **Reused** | Offline TTS engine |
+| Flask | **Reused** | Web server and MJPEG stream |
+| Web Speech API | **Reused** | Browser-side TTS |
+| NumPy / SciPy | **Reused** | Numerical computation |
+
 ## Key Design Decisions
 
 - **Unit estimation:** The base unit `u` is derived from the median nearest-neighbor distance between detected dots. All grid thresholds are ratios of `u`, making the pipeline resolution- and distance-agnostic.

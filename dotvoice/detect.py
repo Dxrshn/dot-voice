@@ -90,3 +90,12 @@ def draw_debug(image, dots):
         cv2.circle(out, (int(x), int(y)), int(r) + 2, (0, 0, 255), 2)
         cv2.circle(out, (int(x), int(y)), 2, (0, 255, 0), -1)
     return out
+
+
+def draw_debug_confidence(image, dots, confidence):
+    out = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR) if len(image.shape) == 2 else image.copy()
+    color = (0, 200, 0) if confidence > 0.6 else (0, 165, 255) if confidence > 0.3 else (0, 0, 255)
+    for x, y, r in dots:
+        cv2.circle(out, (int(x), int(y)), int(r) + 2, color, 2)
+        cv2.circle(out, (int(x), int(y)), 2, (0, 255, 0), -1)
+    return out
