@@ -1,7 +1,7 @@
 from collections import Counter
 from dotvoice.preprocess import preprocess, to_gray
 from dotvoice.detect import detect_dots, draw_debug, draw_debug_confidence
-from dotvoice.grid import segment_grid, estimate_rotation, rotate_dots, cell_confidence, _estimate_unit
+from dotvoice.grid import segment_grid, cell_confidence, _estimate_unit
 from dotvoice.decode import decode_cells
 from dotvoice.quality import blur_score, quality_report
 
@@ -29,15 +29,11 @@ def read_braille(image):
     quality['blur_raw'] = blur_score(gray)
     dots = detect_dots(processed)
 
-    angle = estimate_rotation(dots)
-    quality['skew_angle'] = angle
-    dots_aligned = rotate_dots(dots, angle)
-
-    cells = segment_grid(dots_aligned)
+    cells = segment_grid(dots)
     text = decode_cells(cells)
 
-    u = _estimate_unit(dots_aligned) if dots_aligned else 20.0
-    dot_positions = [(x, y) for x, y, _ in dots_aligned]
+    u = _estimate_unit(dots) if dots else 20.0
+    dot_positions = [(x, y) for x, y, _ in dots]
     confidence = cell_confidence(dot_positions, u) if dot_positions else 0.0
     quality['confidence'] = confidence
 
